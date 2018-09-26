@@ -120,6 +120,8 @@ BEGIN
         END IF;
 
         -- INDEX END
+
+        DBMS_OUTPUT.PUT_LINE('');
     END LOOP;
 END;
 /
