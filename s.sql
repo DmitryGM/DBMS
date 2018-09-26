@@ -2,7 +2,8 @@
 -- FORMAT WRAPPED позволяет оставлять ведущие пробелы в строке
 SET SERVEROUTPUT ON FORMAT WRAPPED;
 
-DECLARE
+CREATE OR REPLACE PROCEDURE LS_COLUMNS
+IS
     tableName VARCHAR2(40) := 'Н_ЛЮДИ';
 
     colNo VARCHAR2(128) := 'No.';
