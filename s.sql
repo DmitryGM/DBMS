@@ -17,7 +17,7 @@ IS
 
     DATA_TYPE VARCHAR2(128);
     COMMEN VARCHAR2(128);
-    INDEX_NAME VARCHAR2(128); -- !!!!!
+    INDEX_NAME VARCHAR2(128);
 
     CURSOR RESULT IS
         SELECT ALL_TAB_COLUMNS.COLUMN_ID AS COLUMN_ID,
@@ -27,14 +27,10 @@ IS
                ALL_TAB_COLUMNS.DATA_PRECISION AS DATA_PRECISION,
                ALL_TAB_COLUMNS.CHAR_LENGTH AS CHAR_LENGTH,
                ALL_COL_COMMENTS.COMMENTS AS COMMENTS
-        FROM ALL_TAB_COLUMNS, ALL_COL_COMMENTS --, ALL_IND_COLUMNS
+        FROM ALL_TAB_COLUMNS, ALL_COL_COMMENTS
         WHERE ALL_TAB_COLUMNS.TABLE_NAME = tableName
         AND ALL_COL_COMMENTS.TABLE_NAME = ALL_TAB_COLUMNS.TABLE_NAME
         AND ALL_TAB_COLUMNS.COLUMN_NAME = ALL_COL_COMMENTS.COLUMN_NAME
-        -- <!!!!!>
-        -- AND ALL_IND_COLUMNS.TABLE_NAME = ALL_TAB_COLUMNS.TABLE_NAME
-        -- AND ALL_IND_COLUMNS.COLUMN_NAME = ALL_TAB_COLUMNS.COLUMN_NAME
-        -- </!!!!!>
         ORDER BY ALL_TAB_COLUMNS.COLUMN_ID;
 
     CURSOR CONSTRS IS
@@ -97,28 +93,16 @@ BEGIN
 
 
         -- INDEX START
-        INDEX_NAME := NULL;
+        INDEX_NAME := 'Index: ';
 
         FOR D IN INDEX_COLUMNS
         LOOP
             IF D.COLUMN_NAME = ROW.COLUMN_NAME THEN
-                INDEX_NAME := 'Index: ';
-                EXIT;
+                -- Вывод отформатированного ограничения на новой строке
+                DBMS_OUTPUT.PUT_LINE(RPAD(' ', NO_LEN + COLUMN_LEN + 2) ||
+                                     RPAD(INDEX_NAME, ATTRIBUTE_NAME_LEN) || D.INDEX_NAME);
             END IF;
         END LOOP;
-
-        IF INDEX_NAME IS NOT NULL THEN
-            FOR D IN INDEX_COLUMNS
-            LOOP
-                IF D.COLUMN_NAME = ROW.COLUMN_NAME THEN
-                    -- Вывод отформатированного ограничения на новой строке
-                    DBMS_OUTPUT.PUT_LINE(RPAD(' ', NO_LEN + COLUMN_LEN + 2) ||
-                                         RPAD(INDEX_NAME, ATTRIBUTE_NAME_LEN) || D.INDEX_NAME);
-                    -- Для того чтобы избежать последующего вывода
-                    INDEX_NAME := ' ';
-                END IF;
-            END LOOP;
-        END IF;
 
         -- INDEX END
 
