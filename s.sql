@@ -16,9 +16,7 @@ DECLARE
 
     DATA_TYPE VARCHAR2(128);
     COMMEN VARCHAR2(128);
-    CNSTR VARCHAR2(128);
     INDEX_NAME VARCHAR2(128); -- !!!!!
-    CNSTR_DESCRIPTION VARCHAR2(128);
 
     CURSOR RESULT IS
         SELECT ALL_TAB_COLUMNS.COLUMN_ID AS COLUMN_ID,
@@ -45,7 +43,7 @@ DECLARE
         AND ALL_CONSTRAINTS.TABLE_NAME = tableName
         AND ALL_CONS_COLUMNS.CONSTRAINT_NAME = ALL_CONSTRAINTS.CONSTRAINT_NAME;
 
-    CURSOR DDDDDDDDDDDDDDD IS
+    CURSOR INDEX_COLUMNS IS
         SELECT ALL_IND_COLUMNS.INDEX_NAME, ALL_IND_COLUMNS.COLUMN_NAME
         FROM ALL_IND_COLUMNS
         WHERE ALL_IND_COLUMNS.TABLE_NAME = tableName;
@@ -97,10 +95,10 @@ BEGIN
         -- COMMEN END
 
 
-		-- INDEX START
+        -- INDEX START
         INDEX_NAME := NULL;
 
-        FOR D IN DDDDDDDDDDDDDDD
+        FOR D IN INDEX_COLUMNS
         LOOP
             IF D.COLUMN_NAME = ROW.COLUMN_NAME THEN
                 INDEX_NAME := 'Index: ';
@@ -109,7 +107,7 @@ BEGIN
         END LOOP;
 
         IF INDEX_NAME IS NOT NULL THEN
-            FOR D IN DDDDDDDDDDDDDDD
+            FOR D IN INDEX_COLUMNS
             LOOP
                 IF D.COLUMN_NAME = ROW.COLUMN_NAME THEN
                     -- Вывод отформатированного ограничения на новой строке
@@ -122,49 +120,6 @@ BEGIN
         END IF;
 
         -- INDEX END
-
-        -- CONSTRAINT START
-        CNSTR := NULL;
-
-		-- Проверка на то что есть ли ограничения у данного столбца
-		-- Если ограничения есть, то добавить имя атрибута и перейти к следующему шагу при помощи EXIT
-        FOR CONSTR IN CONSTRS
-        LOOP
-            IF CONSTR.COLUMN_NAME = ROW.COLUMN_NAME THEN
-                CNSTR := 'Constraint: ';
-                EXIT;
-            END IF;
-        END LOOP;
-
-		-- Проверка не были ли найдены ограничения к данному столбцу, если найдены, то начать вывод всех ограничений данного столбца
-		-- Первое ограничение выводится с 'Constraint: ', следующие же ограничения не содержат данного слова за счет того что переменная CNSTR содержит пустую строку
-        IF CNSTR IS NOT NULL THEN
-            FOR CONSTR IN CONSTRS
-            LOOP
-                IF CONSTR.COLUMN_NAME = ROW.COLUMN_NAME THEN
-                    IF CONSTR.CONSTRAINT_TYPE = 'C' THEN
-                        CNSTR_DESCRIPTION := 'Check constraint';
-                    ELSIF CONSTR.CONSTRAINT_TYPE = 'P' THEN
-                        CNSTR_DESCRIPTION := 'Primary key';
-                    ELSIF CONSTR.CONSTRAINT_TYPE = 'U' THEN
-                        CNSTR_DESCRIPTION := 'Unique key';
-                    ELSIF CONSTR.CONSTRAINT_TYPE = 'R' THEN
-                        CNSTR_DESCRIPTION := 'Referencial integrity';
-                    ELSIF CONSTR.CONSTRAINT_TYPE = 'V' THEN
-                        CNSTR_DESCRIPTION := 'With check option, on a view';
-                    ELSIF CONSTR.CONSTRAINT_TYPE = 'O' THEN
-                        CNSTR_DESCRIPTION := 'With read only, on a view';
-                    END IF;
-					
-					-- Вывод отформатированного ограничения на новой строке
-                    DBMS_OUTPUT.PUT_LINE(RPAD(' ', NO_LEN + COLUMN_LEN + 2) ||
-                                         SUBSTR(RPAD(CNSTR, ATTRIBUTE_NAME_LEN) || CONSTR.CONSTRAINT_NAME || ' ' || CNSTR_DESCRIPTION, 0, ATTRIBUTE_LEN));
-					-- Для того чтобы избежать последующего вывода 'Constraint: '
-                    CNSTR := ' ';
-                END IF;
-            END LOOP;
-        END IF;
-        -- CONSTRAINT END
     END LOOP;
 END;
 /
