@@ -17,7 +17,6 @@ IS
 
     DATA_TYPE VARCHAR2(128);
     COMMEN VARCHAR2(128);
-    INDEX_NAME VARCHAR2(128);
 
     CURSOR RESULT IS
         SELECT ALL_TAB_COLUMNS.COLUMN_ID AS COLUMN_ID,
@@ -93,14 +92,12 @@ BEGIN
 
 
         -- INDEX START
-        INDEX_NAME := 'Index: ';
-
         FOR D IN INDEX_COLUMNS
         LOOP
             IF D.COLUMN_NAME = ROW.COLUMN_NAME THEN
                 -- Вывод отформатированного ограничения на новой строке
                 DBMS_OUTPUT.PUT_LINE(RPAD(' ', NO_LEN + COLUMN_LEN + 2) ||
-                                     RPAD(INDEX_NAME, ATTRIBUTE_NAME_LEN) || D.INDEX_NAME);
+                                     RPAD('Index: ', ATTRIBUTE_NAME_LEN) || D.INDEX_NAME);
             END IF;
         END LOOP;
 
