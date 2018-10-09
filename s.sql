@@ -45,7 +45,7 @@ IS
         WHERE ALL_IND_COLUMNS.TABLE_NAME = tableName;
 BEGIN
     DBMS_OUTPUT.PUT_LINE('Таблица: ' || tableName);
-    DBMS_OUTPUT.PUT_LINE('');
+    DBMS_OUTPUT.NEW_LINE; 
 
     -- HEADER START
     DBMS_OUTPUT.PUT_LINE(RPAD(colNo, NO_LEN) || ' ' ||
@@ -103,7 +103,7 @@ BEGIN
 
         -- INDEX END
 
-        DBMS_OUTPUT.PUT_LINE('');
+        DBMS_OUTPUT.NEW_LINE; 
     END LOOP;
 END;
 /
