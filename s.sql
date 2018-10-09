@@ -3,9 +3,10 @@
 SET SERVEROUTPUT ON FORMAT WRAPPED;
 
 CREATE OR REPLACE PROCEDURE LS_COLUMNS
+(
+    tableName IN VARCHAR
+)
 IS
-    tableName VARCHAR2(40) := 'Н_ЛЮДИ';
-
     colNo VARCHAR2(128) := 'No.';
     colName VARCHAR2(128) := 'Имя столбца';
     colAttr VARCHAR2(128) := 'Атрибуты';
