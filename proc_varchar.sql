@@ -1,0 +1,11 @@
+
+
+CREATE OR REPLACE PROCEDURE foo
+(
+   str IN VARCHAR
+)
+IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(str);
+END;
+/
